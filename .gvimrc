@@ -29,10 +29,10 @@
 
 " set default font
 " https://github.com/Lokaltog/powerline-fonts
-  if has('unix')
-    set guifont=Meslo\ LG\ S\ DZ\ for\ Powerline\ 10
+  if has('mac') || has('win32')
+    set guifont=Meslo\ LG\ S\ DZ\ Regular\ for\ Powerline:h11
   else
-    set guifont=Meslo\ LG\ S\ DZ\ Regular\ for\ Powerline:h15
+    set guifont=Meslo\ LG\ S\ DZ\ for\ Powerline\ 10
   endif
 
 " initial window size
@@ -43,3 +43,10 @@
 
 runtime! custom_config/*.gvim
 
+" Go to tab by number
+  if has('mac')
+    noremap <D-1> 1gt
+    noremap <D-2> 2gt
+    noremap <D-3> 3gt
+    noremap <D-4> 4gt
+  endif

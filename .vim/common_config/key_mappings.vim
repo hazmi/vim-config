@@ -10,6 +10,10 @@
   nmap gr :e config/routes.rb<cr>
   nmap gm :e Gemfile<cr>
 
+" nerdcommenter
+  nmap gcc :call NERDComment(0,"toggle")<cr>
+  vmap gc :call NERDComment(0,"toggle")<cr>
+
 " insert blank lines without going into insert mode
   nmap go o<esc>
   nmap gO O<esc>
@@ -73,4 +77,17 @@
 
 " CTRL-V and SHIFT-Insert are Paste
   map <S-Insert> "+gP
-  cmap <S-Insert> cmap<C-R>+
+  cmap <S-Insert> <C-R>+
+
+
+" Navigation for tab
+  noremap <Leader>1 1gt
+  noremap <Leader>2 2gt
+  noremap <Leader>3 3gt
+  noremap <Leader>4 4gt
+  noremap <Leader>5 5gt
+  noremap <Leader>6 6gt
+  noremap <Leader>7 7gt
+  noremap <Leader>8 8gt
+  noremap <Leader>9 9gt
+  noremap <Leader>0 :tablast<cr>

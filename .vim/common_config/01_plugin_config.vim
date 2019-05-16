@@ -1,65 +1,80 @@
-" Plugins are managed by Bundle. Once VIM is open run :BundleInstall to
+" Plugins are managed by Plug. Once VIM is open run :BundleInstall to
 " install plugins.
-  call vundle#rc()
+call plug#begin('~/.vim/plugged')
+
+" Nerd commenter using default align left
+  Plug 'scrooloose/nerdcommenter'
+  let g:NERDDefaultAlign = 'left'
 
 " Plugins requiring no additional configuration or keymaps
-  Bundle "tomtom/tcomment_vim.git"
-  Bundle "tpope/vim-endwise.git"
-  Bundle "tpope/vim-fugitive.git"
-  Bundle "tpope/vim-rake.git"
-  Bundle "tpope/vim-repeat.git"
-  Bundle "vim-ruby/vim-ruby.git"
-  Bundle "vim-scripts/ruby-matchit.git"
-  Bundle "tpope/vim-abolish.git"
-  Bundle "mattn/emmet-vim"
+  Plug 'tpope/vim-endwise'
+  Plug 'tpope/vim-fugitive'
+  Plug 'tpope/vim-rake'
+  Plug 'tpope/vim-repeat'
+  Plug 'vim-ruby/vim-ruby'
+  Plug 'vim-scripts/ruby-matchit'
+  Plug 'tpope/vim-abolish'
+  Plug 'mattn/emmet-vim'
+  Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+  Plug 'junegunn/fzf.vim'
+    function! Strip(var)
+      return substitute(a:var, '^\s*\(.\{-}\)\s*\n', '\1', '')
+    endfunction
+
+    function! SimpleFZF()
+      let gitdir = Strip(system('git rev-parse --is-inside-work-tree'))
+      if gitdir == 'true'
+        call fzf#run(fzf#wrap({'source': 'git ls-files --exclude-standard --others --cached'}))
+      else
+        :FZF
+      endif
+    endfunction
+    command! SimpleFZF call SimpleFZF()
+  map <Leader>t :SimpleFZF<cr>
+  map <C-P> :SimpleFZF<cr>
+  map <Leader>b :Buffers<cr>
+  map <C-B> :Buffers<cr>
+
+  Plug 'ap/vim-css-color'
+  Plug 'digitaltoad/vim-pug'
+  Plug 'leafgarland/typescript-vim'
+
 
  " Vim airline configs
-  Bundle 'bling/vim-airline.git'
+  Plug 'vim-airline/vim-airline'
+  Plug 'vim-airline/vim-airline-themes'
+  let g:airline#extensions#tabline#enabled = 1
   let g:airline_powerline_fonts = 1
+  let g:airline_theme='minimalist'
 
 " Easy motion config
-  Bundle "easymotion/vim-easymotion"
+  Plug 'easymotion/vim-easymotion'
 
-"Supertab code completion"
-  Bundle "ervandew/supertab.git"
-  let g:SuperTabContextDefaultCompletionType = "<c-n>"
+" Code completion"
+  Plug 'Valloric/YouCompleteMe', { 'do': './install.py' }
+  let g:ycm_autoclose_preview_window_after_completion = 1
 
-" CtrlP
-  Bundle "kien/ctrlp.vim.git"
-    nmap <Leader>b :<C-U>CtrlPBuffer<CR>
-    nmap <Leader>t :<C-U>CtrlP<CR>
-    nmap <C-b> :<C-U>CtrlPBuffer<CR>
-    nmap <C-p> :<C-U>CtrlP<CR>
-    nmap <Leader>T :<C-U>CtrlPTag<CR>
-
-    let g:ctrlp_switch_buffer = 0
-    let g:ctrlp_working_path_mode = 0
-    if executable('ag')
-      let g:ctrlp_use_caching = 0
-      let g:ctrlp_user_command = 'ag %s -l -i --nocolor --nogroup -g ""'
-    else
-      " respect the .gitignore
-      let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files . --cached --exclude-standard --others']
-    endif
+" Fuzzy Finder
+  Plug 'Shougo/unite.vim'
 
 " Slim
-  Bundle "slim-template/vim-slim.git"
+  Plug 'slim-template/vim-slim'
     au BufNewFile,BufRead *.slim set filetype=slim
 
 " Less
-  Bundle "groenewege/vim-less.git"
+  Plug 'groenewege/vim-less'
     au BufNewFile,BufRead *.less set filetype=less
 
 " Handlebars, Mustache, and Friends
-  Bundle "mustache/vim-mustache-handlebars.git"
+  Plug 'mustache/vim-mustache-handlebars'
   au  BufNewFile,BufRead *.mustache,*.handlebars,*.hbs,*.hogan,*.hulk,*.hjs set filetype=html syntax=mustache | runtime! ftplugin/mustache.vim ftplugin/mustache*.vim ftplugin/mustache/*.vim
 
 " Coffee script
-  Bundle "kchmck/vim-coffee-script.git"
+  Plug 'kchmck/vim-coffee-script'
     au BufNewFile,BufRead *.coffee set filetype=coffee
 
 " AG aka The Silver Searcher
-  Bundle 'rking/ag.vim.git'
+  Plug 'rking/ag.vim'
     nmap g/ :Ag!<space>
     nmap g* :Ag! -w <C-R><C-W><space>
     nmap ga :AgAdd!<space>
@@ -70,13 +85,13 @@
 
 
 " Tagbar for navigation by tags using CTags
-  Bundle "majutsushi/tagbar.git"
+  Plug 'majutsushi/tagbar'
     let g:tagbar_autofocus = 1
     map <Leader>rt :!ctags --extra=+f -R *<CR><CR>
     map <Leader>. :TagbarToggle<CR>
 
 " Markdown syntax highlighting
-  Bundle "tpope/vim-markdown.git"
+  Plug 'tpope/vim-markdown'
     augroup mkd
       autocmd BufNewFile,BufRead *.mkd      set ai formatoptions=tcroqn2 comments=n:> filetype=markdown
       autocmd BufNewFile,BufRead *.md       set ai formatoptions=tcroqn2 comments=n:> filetype=markdown
@@ -84,14 +99,20 @@
     augroup END
 
 " NERDTree for project drawer
-  Bundle "scrooloose/nerdtree.git"
+  Plug 'scrooloose/nerdtree'
     let NERDTreeHijackNetrw = 0
     nmap <leader>g :NERDTreeToggle<CR>
     nmap <leader>G :NERDTreeFind<CR>
+    let NERDTreeIgnore = ['\.pyc$']
 
+" NERDTree Plugin
+  Plug 'Xuyuanp/nerdtree-git-plugin'
+
+" GitGutter
+  Plug 'airblade/vim-gitgutter'
 
 " Tabular for aligning text
-  Bundle "godlygeek/tabular.git"
+  Plug 'godlygeek/tabular'
     function! CustomTabularPatterns()
       if exists('g:tabular_loaded')
         AddTabularPattern! symbols         / :/l0
@@ -115,7 +136,7 @@
     vmap <Leader>; :Tabularize /:<CR>
 
 " Unimpaired for keymaps for quicky manipulating lines and files
-  Bundle "tpope/vim-unimpaired.git"
+  Plug 'tpope/vim-unimpaired'
     " Bubble single lines
     nmap <C-Up> [e
     nmap <C-Down> ]e
@@ -126,22 +147,24 @@
 
 
 " Syntastic for catching syntax errors on save
-  Bundle "scrooloose/syntastic.git"
+  Plug 'scrooloose/syntastic'
     let g:syntastic_enable_signs=1
-    let g:syntastic_quiet_messages = {'level': 'warning'}
+    " let g:syntastic_quiet_messages = {'level': 'warning'}
     " syntastic is too slow for haml and sass
+    let g:syntastic_check_on_open = 1
     let g:syntastic_mode_map = { 'mode': 'active',
-                               \ 'active_filetypes': [],
                                \ 'passive_filetypes': ['haml','scss','sass'] }
+    let g:syntastic_ruby_checkers = ['rubocop']
+
 
 
 " gundo for awesome undo tree visualization
-  Bundle "sjl/gundo.vim.git"
+  Plug 'sjl/gundo.vim'
     map <Leader>h :GundoToggle<CR>
 
 
 " rails.vim, nuff' said
-  Bundle "tpope/vim-rails.git"
+  Plug 'tpope/vim-rails'
     map <Leader>oc :Rcontroller<Space>
     map <Leader>ov :Rview<Space>
     map <Leader>om :Rmodel<Space>
@@ -152,7 +175,7 @@
 
 
 " surround for adding surround 'physics'
-  Bundle "tpope/vim-surround.git"
+  Plug 'tpope/vim-surround'
     " # to surround with ruby string interpolation
     let g:surround_35 = "#{\r}"
     " - to surround with no-output erb tag
@@ -162,8 +185,8 @@
 
 
 " Easy async RSpec running
-  Bundle 'thoughtbot/vim-rspec'
-  Bundle "tpope/vim-dispatch.git"
+  Plug 'thoughtbot/vim-rspec'
+  Plug 'tpope/vim-dispatch'
   let g:rspec_command = "Dispatch rspec --format=progress --no-profile {spec}"
   nmap <Leader>rc :wa<CR> :call RunCurrentSpecFile()<CR>
   nmap <Leader>rn :wa<CR> :call RunNearestSpec()<CR>
@@ -171,22 +194,22 @@
   nmap <Leader>ra :wa<CR> :call RunAllSpecs()<CR>
 
 " MultipleCursor
-  Bundle "terryma/vim-multiple-cursors.git"
+  Plug 'terryma/vim-multiple-cursors'
 
 " Blade syntax highlighting
-  Bundle 'xsbeats/vim-blade'
+  Plug 'xsbeats/vim-blade'
 
 " facebook
-  Bundle 'mxw/vim-xhp'
-  Bundle 'hhvm/vim-hack'
+  Plug 'mxw/vim-xhp'
   autocmd FileType php set tabstop=4|set softtabstop=4|set shiftwidth=4
   autocmd FileType hack set tabstop=4|set softtabstop=4|set shiftwidth=4
   au BufEnter *.php set ai sw=4 ts=4 sta et fo=croql
   au BufEnter *.hh set ai sw=4 ts=4 sta et fo=croql
+  au BufEnter *.py set ai sw=4 ts=4 sta et fo=croql
 
 
 " php-cs-fixer (for indentation)
-  Bundle 'stephpy/vim-php-cs-fixer'
+  Plug 'stephpy/vim-php-cs-fixer'
 
 " Fix indentation
   autocmd FileType javascript set tabstop=2|set softtabstop=2|set shiftwidth=2
@@ -195,5 +218,45 @@
   autocmd FileType less set tabstop=2|set softtabstop=2|set shiftwidth=2
   au BufEnter *.less set ai sw=2 ts=2 sta et fo=croql
   au BufEnter *.css set ai sw=2 ts=2 sta et fo=croql
+
+  autocmd FileType scss set tabstop=2|set softtabstop=2|set shiftwidth=2
+  au BufEnter *.scss set ai sw=2 ts=2 sta et fo=croql
+
+  autocmd FileType xbt.php set tabstop=2|set softtabstop=2|set shiftwidth=2
+  au BufEnter *.xbt.php set ai sw=2 ts=2 sta et fo=croql
+
+" Color indentation
+  Plug 'nathanaelkane/vim-indent-guides'
+
+  Plug 'janko-m/vim-test'
+
+  function! s:cat(filename) abort
+    return system('cat '.a:filename)
+  endfunction
+
+  function! VagrantTransform(cmd) abort
+    if !empty(glob('Vagrantfile'))
+      let vagrant_project = get(matchlist(s:cat('Vagrantfile'), '\vconfig\.vm\.synced_folder \".+\", \"(.+)\",\s+disabled:\s+false'), 1)
+      return 'vagrant ssh --command '.shellescape('cd '.vagrant_project.'; '.a:cmd)
+    else
+      return a:cmd
+    endif
+  endfunction
+
+  let g:test#custom_transformations = {'vagrant': function('VagrantTransform')}
+  let g:test#transformation = 'vagrant'
+
+  nmap <silent> <leader>T :TestFile<CR>
+  nmap <silent> <leader>F :TestNearest<CR>
+
+" syntastic for eslint and stylelint
+  Plug 'vim-syntastic/syntastic'
+  let g:syntastic_bash_hack = 0
+  let g:syntastic_mode_map = { 'mode': 'active', 'active_filetypes': ['scss','javascript']}
+  let g:syntastic_javascript_checkers = ['eslint']
+  let g:syntastic_scss_checkers = ['stylelint']
+
+
+call plug#end()
 
 filetype plugin indent on
